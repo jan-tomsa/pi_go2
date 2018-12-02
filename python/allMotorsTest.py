@@ -69,11 +69,11 @@ class MMotor(PiconZeroMotor):
         self.mot_no = mot_no_
 
     def stop(self):
-        print("stop")
+        #print("stop")
         self.getPico().setMotor(self.mot_no,0)
 
     def setSpeed(self,speed):
-        print("setSpeed()")
+        #print("setSpeed()")
         self.getPico().setMotor(self.mot_no,speed)
 
 
@@ -91,7 +91,7 @@ class PMotor(PiconZeroMotor):
         self.getPico().setOutputConfig(self.pin2, OUTPUT_PWM)
 
     def stop(self):
-        print("stop")
+        #print("stop")
         self.getPico().setOutput(self.pin1, 0)
         self.getPico().setOutput(self.pin2, 0)
 
