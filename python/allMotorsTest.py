@@ -1,7 +1,7 @@
 # Picon Zero All Motors Test
 # Press Ctrl-C to stop
 #
-# To check wiring is correct ensure the order of movement as above is correct
+# To check wiring is correct ensure the order of movement is correct
 
 import piconzero as pz, time
 
@@ -108,25 +108,33 @@ class PMotor(PiconZeroMotor):
 
 speed = 60
 
-print "Tests the motors by using the arrow keys to control"
-print "Use , or < to slow down"
-print "Use . or > to speed up"
-print "Speed changes take effect when the next arrow key is pressed"
+print "Tests the motors by using the keys to control"
+print "Use following keys to control various motors"
+print
+print "Motor # | backwards | forward | speed up  | slow down |"
+print "--------+-----------+---------+-----------+-----------+"
+print "    1   |    q      |  w      |    a      |    z      |"
+print "    2   |     e     |   r     |     d     |     c     |"
+print "    3   |      t    |    y    |      g    |      b    |"
+print "    4   |       u   |     i   |       j   |       m   |"
+print "    5   |        o  |      p  |        l  |        .  |"
+print
 print "Press Ctrl-C to end"
 print
 
 pz.init()
 
-motor1 = MMotor( pz, 0 )
-motor2 = MMotor( pz, 1 )
-motor3 = PMotor( pz, 0, 1 )
-motor4 = PMotor( pz, 2, 3 )
-motor5 = PMotor( pz, 4, 5 )
+motor1 = MMotor( pz, 1 )
+motor2 = MMotor( pz, 0 )
+motor3 = PMotor( pz, 5, 4 )
+motor4 = PMotor( pz, 3, 2 )
+motor5 = PMotor( pz, 1, 0 )
 
 # main loop
 try:
     while True:
         keyp = readkey()
+        print "Key pressed: '{}'".format(keyp)
         # motor1
         if keyp == 'q':
             motor1.reverse()
