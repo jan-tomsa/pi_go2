@@ -18,3 +18,9 @@ def motor(motor_id):
 @app.route('/test/')
 def test():
     pi.write(21, 1) # on
+    return 'Testing LED (GPIO #21) turned on'
+
+@app.route('/test2/')
+def test2():
+    pi.write(21, 0) # off
+    return 'Testing LED (GPIO #21) turned off'
