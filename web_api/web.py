@@ -16,4 +16,5 @@ def motor(motor_id):
 
 
 @app.route('/test/')
+def test():
     pi.write(21, 1) # on
