@@ -20,13 +20,13 @@ def motor(motor_id):
 @app.route('/test/')
 def test():
     pi.write(21, 1) # on
-    resp = flask.Response("Testing LED (GPIO #21) turned on")
+    resp = make_response("Testing LED (GPIO #21) turned on")
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
 @app.route('/test2/')
 def test2():
     pi.write(21, 0) # off
-    resp = flask.Response("Testing LED (GPIO #21) turned off")
+    resp = make_response("Testing LED (GPIO #21) turned off")
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
