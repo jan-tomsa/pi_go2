@@ -23,10 +23,12 @@ def set_mode(pin_no):
 
 
 @app.route('/write/<pin_no>/')
-def set_mode(pin_no):
+def write(pin_no):
     val = request.form['val']
-    pi.write(pin_no, val) # on
-    return 'Pin {} set to {}'.format(pin_no,val)
+    pi.write(pin_no, val) 
+    resp = make_response('Pin {} set to {}'.format(pin_no,val))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 
