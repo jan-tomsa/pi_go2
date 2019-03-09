@@ -13,3 +13,24 @@ Next steps:
 * Implement JS version of lib
 * Implement JS web GUI for direct control
 * Implement educational programming web interface
+
+
+Usage with Snap!
+
+Based on tutorial:
+http://www.raspberry-pi-geek.com/Archive/2014/06/A-web-based-alternative-to-Scratch
+
+Web API:
+sudo pigpiod
+export FLASK_APP="web.py"
+export FLASK_DEBUG="1"
+flask run
+
+
+navigate to:
+http://<IP address of Pi>/Snap/snap.html
+
+Import
+.../snap/PiGO2_web_api_testing2.xml
+
+make use of custom block "test"
