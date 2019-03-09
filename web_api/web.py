@@ -17,6 +17,19 @@ def motor(motor_id):
     return 'Motor {}'.format(motor_id)
 
 
+@app.route('/set_mode/<pin_no>/')
+def set_mode(pin_no):
+    return 'TODO: set_mode({},??)'.format(pin_no)
+
+
+@app.route('/write/<pin_no>/')
+def set_mode(pin_no):
+    val = request.form['val']
+    pi.write(pin_no, val) # on
+    return 'Pin {} set to {}'.format(pin_no,val)
+
+
+
 @app.route('/test/')
 def test():
     pi.write(21, 1) # on
