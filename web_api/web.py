@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, make_response
 import pigpio
 
 app = Flask(__name__)
