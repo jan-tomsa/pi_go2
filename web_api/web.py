@@ -1,4 +1,4 @@
-from flask import Flask, make_response
+from flask import Flask, make_response, request
 import pigpio
 
 app = Flask(__name__)
@@ -23,9 +23,9 @@ def set_mode(pin_no):
 
 
 @app.route('/write/<pin_no>/')
-def write(pin_no):
-    val = request.form['val']
-    pi.write(pin_no, val) 
+def pin_write(pin_no):
+    val = int(request.args.get('val'))
+    pi.write(int(pin_no), val) 
     resp = make_response('Pin {} set to {}'.format(pin_no,val))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
