@@ -24,23 +24,22 @@ def set_mode(pin_no):
         pi.set_mode(pin_no, pigpio.INPUT)
     else:
         pi.set_mode(pin_no, pigpio.OUTPUT)
-    resp = make_response('set_mode({},??)'.format(pin_no))
+    resp = make_response('set_mode({},{})'.format(pin_no,mode))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
 
-@app.route('/read/<pin_no>/')
+@app.route('/read/<int:pin_no>/')
 def pin_read(pin_no):
-    #val = int(request.args.get('val'))
-    val = pi.read(int(pin_no)) 
+    val = pi.read(pin_no)
     resp = make_response('{}'.format(val))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-@app.route('/write/<pin_no>/')
+@app.route('/write/<int:pin_no>/')
 def pin_write(pin_no):
     val = int(request.args.get('val'))
-    pi.write(int(pin_no), val) 
+    pi.write(pin_no, val)
     resp = make_response('Pin {} set to {}'.format(pin_no,val))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
