@@ -28,6 +28,13 @@ def set_mode(pin_no):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+@app.route('/get_mode/<int:pin_no>/')
+def get_mode(pin_no):
+    mode = pi.get_mode(pin_no)
+    resp = make_response('{}'.format(mode))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/read/<int:pin_no>/')
 def pin_read(pin_no):
