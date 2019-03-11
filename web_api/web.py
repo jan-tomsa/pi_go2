@@ -22,7 +22,7 @@ def set_mode(pin_no):
     mode = request.args.get('mode')
     if (mode == 'INPUT'):
         pi.set_mode(pin_no, pigpio.INPUT)
-        pi.set_pull_up_down(23, pigpio.PUD_UP)
+        pi.set_pull_up_down(pin_no, pigpio.PUD_UP)
     else:
         pi.set_mode(pin_no, pigpio.OUTPUT)
     resp = make_response('set_mode({},{})'.format(pin_no,mode))
