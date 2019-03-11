@@ -4,4 +4,8 @@ http://localhost:5555/write/21/?val=0
 
 http://localhost:5555/set_mode/22/?mode=INPUT
 
+http://localhost:5555/set_mode/22/?mode=OUTPUT
+
+http://localhost:5555/get_mode/22/
+
 http://localhost:5555/read/22/
