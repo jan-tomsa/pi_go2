@@ -1,20 +1,29 @@
 from flask import Flask, make_response, request
 import pigpio
+import piconzero as pz, time
 
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
 
 pi = pigpio.pi() # Connect to local Pi.
-#pi.set_mode(21, pigpio.INPUT)
+pz.init()
+
+motor1 = MMotor( pz, 1 )
+motor2 = MMotor( pz, 0 )
+motor3 = PMotor( pz, 5, 4 )
+motor4 = PMotor( pz, 3, 2 )
+motor5 = PMotor( pz, 1, 0 )
 
 @app.route('/')
 def index():
     return 'Flaska se hlasi!'
 
-@app.route('/motor/<motor_id>/')
+@app.route('/piconzero/<int:motor_id>/')
 def motor(motor_id):
-    return 'Motor {}'.format(motor_id)
+    direction = request.args.get('dir')
+    speed = request.args.get('speed')
+    return 'Motor {} - {} - speed: {}'.format(motor_id,direction,speed)
 
 
 @app.route('/set_mode/<int:pin_no>/')
