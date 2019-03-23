@@ -88,15 +88,18 @@ motor3 = PMotor( pz, 5, 4 )
 motor4 = PMotor( pz, 3, 2 )
 motor5 = PMotor( pz, 1, 0 )
 
+motors = [motor1,motor2,motor3,motor4,motor5]
+
 @app.route('/')
 def index():
     return 'Flaska se hlasi!'
 
 @app.route('/piconzero/<int:motor_id>/')
 def motor(motor_id):
-    direction = request.args.get('dir')
-    speed = request.args.get('speed')
-    return 'Motor {} - {} - speed: {}'.format(motor_id,direction,speed)
+    #direction = request.args.get('dir')
+    speed = int(request.args.get('speed'))
+    motors[motor_id-1].setSpeed(speed)
+    return 'Motor {} - speed: {}'.format(motor_id,speed)
 
 
 @app.route('/set_mode/<int:pin_no>/')
