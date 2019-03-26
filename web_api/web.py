@@ -88,7 +88,7 @@ class AFMotorSet():
             dir_i = 1
         if direction == 'BACKWARD':
             dir_i = 2
-        self.comm_array[mot_id*2] = 0
+        self.comm_array[mot_id*2] = dir_i
         self.comm_array[mot_id*2+1] = speed
         self.bus.write_i2c_block_data(addr,self.comm_array[0],self.comm_array[1:])
 
