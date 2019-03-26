@@ -78,10 +78,10 @@ class PMotor(PiconZeroMotor):
 class AFMotorSet():
     bus = None
     comm_array = [0,0,0,0,0,0,0,0]
-    def __init__(self, bus_)
+    def __init__(self, bus_):
         self.bus = bus_
 
-    def setSpeed(self, mot_id, direction, speed)
+    def setSpeed(self, mot_id, direction, speed):
         if direction == 'STOP':
             dir_i = 0
         if direction == 'FORWARD':
