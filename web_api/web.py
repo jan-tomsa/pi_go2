@@ -1,20 +1,105 @@
+#/usr/bin/python3
 from flask import Flask, make_response, request
 import pigpio
+import piconzero as pz, time
+
+
+class PiconZeroMotor:
+    #pico = null
+    current_speed = 0
+    def setPico(self,pico_):
+        self.pico = pico_
+
+    def getPico(self):
+        return self.pico
+
+    def incSpeed(self,delta):
+        self.current_speed = max( min( self.current_speed+delta, 127), -127)
+        self.setSpeed(self.current_speed)
+
+    def getSpeed(self):
+        return self.current_speed
+
+    def forward(self):
+        self.current_speed = abs(self.current_speed)
+        self.setSpeed(self.current_speed)
+
+    def reverse(self):
+        self.current_speed = -abs(self.current_speed)
+        self.setSpeed(self.current_speed)
+
+# Motor driven by "standard" Picon Zero motor controls
+class MMotor(PiconZeroMotor):
+    mot_no = 0
+    def __init__(self, pico_, mot_no_):
+        self.setPico(pico_)
+        self.mot_no = mot_no_
+
+    def stop(self):
+        #print("stop")
+        self.getPico().setMotor(self.mot_no,0)
+
+    def setSpeed(self,speed):
+        #print("setSpeed()")
+        self.getPico().setMotor(self.mot_no,speed)
+
+
+OUTPUT_PWM = 1
+
+# Motor driven by Picon Zero PWM (servo) controls
+class PMotor(PiconZeroMotor):
+    pin1 = 0
+    pin2 = 0
+    def __init__(self, pico_, pin1_, pin2_):
+        self.setPico(pico_)
+        self.pin1 = pin1_
+        self.pin2 = pin2_
+        self.getPico().setOutputConfig(self.pin1, OUTPUT_PWM)
+        self.getPico().setOutputConfig(self.pin2, OUTPUT_PWM)
+
+    def stop(self):
+        #print("stop")
+        self.getPico().setOutput(self.pin1, 0)
+        self.getPico().setOutput(self.pin2, 0)
+
+    def setSpeed(self,speed):
+        if (speed>=0):
+            pin1val = speed*2
+            pin2val = 0
+        if (speed<0):
+            pin1val = 0
+            pin2val = -speed*2
+        print("P.setSpeed( {} <= {}, {} <= {} )".format( self.pin1, pin1val, self.pin2, pin2val ))
+        self.getPico().setOutput(self.pin1, pin1val)
+        self.getPico().setOutput(self.pin2, pin2val)
+
+
 
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
 
 pi = pigpio.pi() # Connect to local Pi.
-#pi.set_mode(21, pigpio.INPUT)
+pz.init()
+
+motor1 = MMotor( pz, 1 )
+motor2 = MMotor( pz, 0 )
+motor3 = PMotor( pz, 5, 4 )
+motor4 = PMotor( pz, 3, 2 )
+motor5 = PMotor( pz, 1, 0 )
+
+motors = [motor1,motor2,motor3,motor4,motor5]
 
 @app.route('/')
 def index():
     return 'Flaska se hlasi!'
 
-@app.route('/motor/<motor_id>/')
+@app.route('/piconzero/<int:motor_id>/')
 def motor(motor_id):
-    return 'Motor {}'.format(motor_id)
+    #direction = request.args.get('dir')
+    speed = int(request.args.get('speed'))
+    motors[motor_id-1].setSpeed(speed)
+    return 'Motor {} - speed: {}'.format(motor_id,speed)
 
 
 @app.route('/set_mode/<int:pin_no>/')
@@ -52,18 +137,3 @@ def pin_write(pin_no):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
-
-
-@app.route('/test/')
-def test():
-    pi.write(21, 1) # on
-    resp = make_response("Testing LED (GPIO #21) turned on")
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-@app.route('/test2/')
-def test2():
-    pi.write(21, 0) # off
-    resp = make_response("Testing LED (GPIO #21) turned off")
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
