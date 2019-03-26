@@ -2,6 +2,7 @@
 from flask import Flask, make_response, request
 import pigpio
 import piconzero as pz, time
+from smbus import SMBus
 
 
 class PiconZeroMotor:
@@ -74,13 +75,29 @@ class PMotor(PiconZeroMotor):
         self.getPico().setOutput(self.pin2, pin2val)
 
 
+class AFMotorSet():
+    bus = None
+    comm_array = [0,0,0,0,0,0,0,0]
+    def __init__(self, bus_)
+        self.bus = bus_
+
+    def setSpeed(self, mot_id, direction, speed)
+        if direction == 'STOP':
+            dir_i = 0
+        if direction == 'FORWARD':
+            dir_i = 1
+        if direction == 'BACKWARD':
+            dir_i = 2
+        self.comm_array[mot_id*2] = 0
+        self.comm_array[mot_id*2+1] = speed
+	self.bus.write_i2c_block_data(addr,self.comm_array[0],self.comm_array[1:])
 
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
 
 pi = pigpio.pi() # Connect to local Pi.
-pz.init()
+pz.init()  # maybe put into web api function?
 
 motor1 = MMotor( pz, 1 )
 motor2 = MMotor( pz, 0 )
@@ -90,13 +107,24 @@ motor5 = PMotor( pz, 1, 0 )
 
 motors = [motor1,motor2,motor3,motor4,motor5]
 
+addr = 0x8 # bus address
+bus = SMBus(1) # indicates /dev/ic2-1
+
+af_motor_set = AFMotorSet(bus)
+
 @app.route('/')
 def index():
     return 'Flaska se hlasi!'
 
+@app.route('/afmotor/<int:motor_id>/')
+def afmotor(motor_id):
+    direction = request.args.get('dir')
+    speed = int(request.args.get('speed'))
+    af_motor_set.setSpeed(motor_id,direction,speed)
+    return 'AFMotor {} - direction: {} speed: {}'.format(motor_id,direction,speed)
+
 @app.route('/piconzero/<int:motor_id>/')
-def motor(motor_id):
-    #direction = request.args.get('dir')
+def piconzero(motor_id):
     speed = int(request.args.get('speed'))
     motors[motor_id-1].setSpeed(speed)
     return 'Motor {} - speed: {}'.format(motor_id,speed)
