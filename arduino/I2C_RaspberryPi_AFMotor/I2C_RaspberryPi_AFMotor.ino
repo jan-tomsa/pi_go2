@@ -60,7 +60,7 @@ void loop() {
         ///////////// Motor 2 //////////////
         byte dir2 = receivedBytes[2];
         byte speed2 = receivedBytes[3];
-        motor2.setSpeed(speed1);
+        motor2.setSpeed(speed2);
         if (dir2==0) {
           motor2.run(RELEASE);
           Serial.print("M2* ");
@@ -77,7 +77,7 @@ void loop() {
         ///////////// Motor 3 //////////////
         byte dir3 = receivedBytes[4];
         byte speed3 = receivedBytes[5];
-        motor3.setSpeed(speed1);
+        motor3.setSpeed(speed3);
         if (dir3==0) {
           motor3.run(RELEASE);
           Serial.print("M3* ");
@@ -94,7 +94,7 @@ void loop() {
         ///////////// Motor 4 //////////////
         byte dir4 = receivedBytes[6];
         byte speed4 = receivedBytes[7];
-        motor4.setSpeed(speed1);
+        motor4.setSpeed(speed4);
         if (dir4==0) {
           motor4.run(RELEASE);
           Serial.print("M4* ");
