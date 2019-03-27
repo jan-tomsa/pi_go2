@@ -40,52 +40,77 @@ void setup() {
 void loop() {
     delay(100);
     if (newDataReceived) {
-        if (receivedBytes[0]==0) {
-          motor1.setSpeed(receivedBytes[1]);
-          motor1.run(FORWARD);
-          Serial.print("M1+ ");
-          Serial.print(receivedBytes[1]);
+        ///////////// Motor 1 //////////////
+        byte dir1 = receivedBytes[0];
+        byte speed1 = receivedBytes[1];
+        motor1.setSpeed(speed1);
+        if (dir1==0) {
+          motor1.run(RELEASE);
+          Serial.print("M1* ");
         } else {
-          motor1.setSpeed(receivedBytes[1]);
-          motor1.run(BACKWARD);
-          Serial.print("M1- ");
-          Serial.print(receivedBytes[1]);
+            if (dir1==1) {
+                motor1.run(FORWARD);
+                Serial.print("M1+ ");
+            } else {
+                motor1.run(BACKWARD);
+                Serial.print("M1- ");
+            }
         }
-        if (receivedBytes[2]==0) {
-          motor2.setSpeed(receivedBytes[3]);
-          motor2.run(FORWARD);
-          Serial.print("M2+ ");
-          Serial.print(receivedBytes[3]);
+        Serial.print(speed1);
+        ///////////// Motor 2 //////////////
+        byte dir2 = receivedBytes[2];
+        byte speed2 = receivedBytes[3];
+        motor2.setSpeed(speed1);
+        if (dir2==0) {
+          motor2.run(RELEASE);
+          Serial.print("M2* ");
         } else {
-          motor2.setSpeed(receivedBytes[3]);
-          motor2.run(BACKWARD);
-          Serial.print("M2- ");
-          Serial.print(receivedBytes[3]);
+            if (dir2==1) {
+                motor2.run(FORWARD);
+                Serial.print("M2+ ");
+            } else {
+                motor2.run(BACKWARD);
+                Serial.print("M2- ");
+            }
         }
-        if (receivedBytes[4]==0) {
-          motor3.setSpeed(receivedBytes[5]);
-          motor3.run(FORWARD);
-          Serial.print("M3+ ");
-          Serial.print(receivedBytes[5]);
+        Serial.print(speed2);
+        ///////////// Motor 3 //////////////
+        byte dir3 = receivedBytes[4];
+        byte speed3 = receivedBytes[5];
+        motor3.setSpeed(speed1);
+        if (dir3==0) {
+          motor3.run(RELEASE);
+          Serial.print("M3* ");
         } else {
-          motor3.setSpeed(receivedBytes[5]);
-          motor3.run(BACKWARD);
-          Serial.print("M3- ");
-          Serial.print(receivedBytes[5]);
+            if (dir3==1) {
+                motor3.run(FORWARD);
+                Serial.print("M3+ ");
+            } else {
+                motor3.run(BACKWARD);
+                Serial.print("M3- ");
+            }
         }
-        if (receivedBytes[6]==0) {
-          motor4.setSpeed(receivedBytes[7]);
-          motor4.run(FORWARD);
-          Serial.print("M4+ ");
-          Serial.print(receivedBytes[7]);
+        Serial.print(speed3);
+        ///////////// Motor 4 //////////////
+        byte dir4 = receivedBytes[6];
+        byte speed4 = receivedBytes[7];
+        motor4.setSpeed(speed1);
+        if (dir4==0) {
+          motor4.run(RELEASE);
+          Serial.print("M4* ");
         } else {
-          motor4.setSpeed(receivedBytes[7]);
-          motor4.run(BACKWARD);
-          Serial.print("M4- ");
-          Serial.print(receivedBytes[7]);
+            if (dir4==1) {
+                motor4.run(FORWARD);
+                Serial.print("M4+ ");
+            } else {
+                motor4.run(BACKWARD);
+                Serial.print("M4- ");
+            }
         }
+        Serial.print(speed4);
         Serial.println("");
         newDataReceived = false;
+        digitalWrite(ledPin, LOW); // turn it off
     }
 }
 

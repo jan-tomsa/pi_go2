@@ -120,14 +120,18 @@ def index():
 def afmotor(motor_id):
     direction = request.args.get('dir')
     speed = int(request.args.get('speed'))
-    af_motor_set.setSpeed(motor_id,direction,speed)
-    return 'AFMotor {} - direction: {} speed: {}'.format(motor_id,direction,speed)
+    af_motor_set.setSpeed(motor_id-1,direction,speed)
+    resp = make_response('AFMotor {} - direction: {} speed: {}'.format(motor_id,direction,speed))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @app.route('/piconzero/<int:motor_id>/')
 def piconzero(motor_id):
     speed = int(request.args.get('speed'))
     motors[motor_id-1].setSpeed(speed)
-    return 'Motor {} - speed: {}'.format(motor_id,speed)
+    resp = make_response('Motor {} - speed: {}'.format(motor_id,speed))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/set_mode/<int:pin_no>/')
