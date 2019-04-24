@@ -114,7 +114,9 @@ af_motor_set = AFMotorSet(bus)
 
 @app.route('/')
 def index():
-    return 'Flaska se hlasi!'
+    resp = make_response('Flaska se hlasi!')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @app.route('/afmotor/<int:motor_id>/')
 def afmotor(motor_id):
