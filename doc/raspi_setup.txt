@@ -1,0 +1,30 @@
+= Setup of Raspberry Pi for running PiGO and controlling it from Snap! =
+
+== Snap! installation ==
+(needs to be done only once)
+
+guide:
+http://www.raspberry-pi-geek.com/Archive/2014/06/A-web-based-alternative-to-Scratch
+
+git clone https://github.com/jmoenig/Snap--Build-Your-Own-Blocks.git
+
+sudo mkdir /var/www/Snap
+
+sudo cp -Rv Snap--Build-Your-Own-Blocks/* /var/www/Snap/
+
+sudo apt-get lighttpd
+
+== GPIO daemon ==
+(need to be done everytime)
+
+sudo pigpiod
+
+== Flask ==
+(need to be done everytime)
+
+cd ~/pi_go2/web_api/
+
+export FLASK_APP="web.py"
+export FLASK_DEBUG="1"
+
+flask run
