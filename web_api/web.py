@@ -171,3 +171,12 @@ def pin_write(pin_no):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+
+@app.route('/pwm/<int:gpio>/')
+def pwm(gpio):
+    val = int(request.args.get('val'))
+    pi.set_PWM_dutycycle(gpio,val)
+    resp = make_response('PWM {} set to {}'.format(gpio,val))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
