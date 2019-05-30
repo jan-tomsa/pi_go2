@@ -121,3 +121,33 @@ void receiveEvent(int howMany) {
     newDataReceived = true;
     digitalWrite(ledPin, HIGH);
 }
+
+void serialEvent() {
+    char inputString[16];
+    byte inputPos = 0;
+    while (Serial.available()) {
+      // get the new byte:
+      char inChar = (char)Serial.read();
+      // add it to the inputString:
+      if (inputPos < 16) {
+        inputString[inputPos] = inChar;
+        inputPos++;
+      }
+    }
+    byte recPos = 0;
+    byte inPos=0;
+    while (inPos<15) {
+      char dir = inputString[inPos];
+      receivedBytes[recPos] = (dir == '.' ? 0
+                                          : (dir == '+' ? 1 : 2)
+                              );
+      recPos++;
+      inPos++;
+      String num = ""+(char)inputString[inPos]+(char)inputString[inPos+1]+(char)inputString[inPos+2];
+      receivedBytes[recPos] = num.toInt();
+      inPos += 3;
+      recPos++;
+    }
+    newDataReceived = true;
+    digitalWrite(ledPin, HIGH);
+}

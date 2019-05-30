@@ -3,7 +3,7 @@ from flask import Flask, make_response, request
 import pigpio
 import piconzero as pz, time
 from smbus import SMBus
-
+import serial
 
 class PiconZeroMotor:
     #pico = null
@@ -92,6 +92,34 @@ class AFMotorSet():
         self.comm_array[mot_id*2+1] = speed
         self.bus.write_i2c_block_data(addr,self.comm_array[0],self.comm_array[1:])
 
+class AFMotor():
+    direction = '.'
+    speed = 0
+    def setSpeed(self, direction_, speed_):
+        self.direction = direction_
+        self.speed = speed_
+    def getCommStr(self):
+        return '{}{:03}'.format(self.direction, self.speed)
+
+class AFMotorSetSerial():
+    ser = None
+    motors = []
+    def __init__(self, serial_port_path):
+        self.ser = serial.Serial(serial_port_path, 9600) # Establish the connection on a specific port
+        motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
+
+    def setSpeed(self, mot_id, direction, speed):
+        if direction == 'STOP':
+            dir_i = '.'
+        if direction == 'FORWARD':
+            dir_i = '+'
+        if direction == 'BACKWARD':
+            dir_i = '-'
+        output_str = ""
+        for m in self.motors:
+            output_str += m.getComm()
+        self.ser.write(output_str)
+
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
@@ -110,11 +138,12 @@ motors = [motor1,motor2,motor3,motor4,motor5]
 addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
-af_motor_set = AFMotorSet(bus)
+#af_motor_set = AFMotorSet(bus)
+af_motor_set = AFMotorSetSerial('/dev/tty.usbmodem1d11')
 
 @app.route('/')
 def index():
-    resp = make_response('Flaska se hlasi!')
+    resp = make_response('PiGO 2 web module testing message!')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
