@@ -9,3 +9,7 @@ http://localhost:5555/set_mode/22/?mode=OUTPUT
 http://localhost:5555/get_mode/22/
 
 http://localhost:5555/read/22/
+
+http://localhost:5555/pwm/18/?val=64
+
+http://localhost:5555/pwm/12/?val=64
