@@ -109,6 +109,7 @@ class AFMotorSetSerial():
         self.motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
 
     def setSpeed(self, mot_id, direction, speed):
+        dir_i = '.'
         if direction == 'STOP':
             dir_i = '.'
         if direction == 'FORWARD':
@@ -116,6 +117,7 @@ class AFMotorSetSerial():
         if direction == 'BACKWARD':
             dir_i = '-'
         output_str = ""
+        self.motors[mot_id].setSpeed(dir_i,speed)
         for m in self.motors:
             output_str += m.getCommStr()
         self.ser.write(output_str.encode())
