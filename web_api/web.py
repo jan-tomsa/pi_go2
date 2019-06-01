@@ -82,6 +82,7 @@ class AFMotorSet():
         self.bus = bus_
 
     def setSpeed(self, mot_id, direction, speed):
+        dir_i = 0
         if direction == 'STOP':
             dir_i = 0
         if direction == 'FORWARD':
@@ -120,6 +121,7 @@ class AFMotorSetSerial():
         self.motors[mot_id].setSpeed(dir_i,speed)
         for m in self.motors:
             output_str += m.getCommStr()
+        output_str += '\n'
         self.ser.write(output_str.encode())
         return output_str
 
