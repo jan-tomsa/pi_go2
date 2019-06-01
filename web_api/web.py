@@ -118,7 +118,7 @@ class AFMotorSetSerial():
         output_str = ""
         for m in self.motors:
             output_str += m.getComm()
-        self.ser.write(output_str)
+        self.ser.write(output_str.encode())
 
 app = Flask(__name__)
 
@@ -139,7 +139,7 @@ addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
 #af_motor_set = AFMotorSet(bus)
-af_motor_set = AFMotorSetSerial('/dev/tty.usbmodem1d11')
+af_motor_set = AFMotorSetSerial('/dev/ttyUSB0')
 
 @app.route('/')
 def index():
