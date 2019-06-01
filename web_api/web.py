@@ -106,7 +106,7 @@ class AFMotorSetSerial():
     motors = []
     def __init__(self, serial_port_path):
         self.ser = serial.Serial(serial_port_path, 9600) # Establish the connection on a specific port
-        motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
+        self.motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
 
     def setSpeed(self, mot_id, direction, speed):
         if direction == 'STOP':
