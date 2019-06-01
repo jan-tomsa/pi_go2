@@ -119,6 +119,7 @@ class AFMotorSetSerial():
         for m in self.motors:
             output_str += m.getComm()
         self.ser.write(output_str.encode())
+        return output_str
 
 app = Flask(__name__)
 
@@ -151,8 +152,8 @@ def index():
 def afmotor(motor_id):
     direction = request.args.get('dir')
     speed = int(request.args.get('speed'))
-    af_motor_set.setSpeed(motor_id-1,direction,speed)
-    resp = make_response('AFMotor {} - direction: {} speed: {}'.format(motor_id,direction,speed))
+    motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
+    resp = make_response('AFMotor {} - direction: {} speed: {}, comm: "{}"'.format(motor_id,direction,speed,motor_response))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
