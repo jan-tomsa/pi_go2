@@ -24,9 +24,16 @@ volatile boolean newDataReceived = false;
 const int ledPin = 13; // onboard LED
 static_assert(LOW == 0, "Expecting LOW to be 0");
 
+
+String inputString = "";         // a String to hold incoming data
+bool stringComplete = false;  // whether the string is complete
+
+
 void setup() {
     Serial.begin(9600);           // set up Serial library at 9600 bps
     Serial.println("Motor test!");
+    // reserve 200 bytes for the inputString:
+    inputString.reserve(200);
     Wire.begin(0x8);                // join i2c bus with address #8
     Wire.onReceive(receiveEvent); // register event
     pinMode(ledPin, OUTPUT);
@@ -39,6 +46,46 @@ void setup() {
 
 void loop() {
     delay(100);
+    // print the string when a newline arrives:
+    if (stringComplete) {
+      Serial.println(inputString);
+
+      // .000.000.000.000
+      // .000.000+255.000
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////
+      newDataReceived = true;
+      digitalWrite(ledPin, HIGH);
+      byte recPos = 0;
+      byte inPos=0;
+      while (inPos<15) {
+        char dir = inputString[inPos];
+        //Serial.println(dir);
+        receivedBytes[recPos] = (dir == '.' ? 0
+                                            : (dir == '+' ? 1 : 2)
+                                );
+        recPos++;
+        inPos++;
+        //String num = ""+(char)inputString[inPos]+(char)inputString[inPos+1]+(char)inputString[inPos+2];
+        int num = (((byte)inputString[inPos])-48)*100
+                 +(((byte)inputString[inPos+1])-48)*10
+                 +((byte)inputString[inPos+2])-48;
+        //Serial.print("||");
+        //Serial.print((char)inputString[inPos]);
+        //Serial.print((byte)inputString[inPos]);
+        //Serial.print(num);
+        //Serial.println("||");
+        receivedBytes[recPos] = num;//.toInt();
+        inPos += 3;
+        recPos++;
+      }
+      //for (byte i=0;i<8;i++) {
+      //  Serial.println(receivedBytes[i]);
+      //}
+
+      // clear the string:
+      inputString = "";
+      stringComplete = false;
+    }
     if (newDataReceived) {
         ///////////// Motor 1 //////////////
         byte dir1 = receivedBytes[0];
@@ -122,7 +169,33 @@ void receiveEvent(int howMany) {
     digitalWrite(ledPin, HIGH);
 }
 
+
+
 void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+void serialEventXX() {
     char inputString[16];
     byte inputPos = 0;
     while (Serial.available()) {
