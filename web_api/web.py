@@ -117,7 +117,7 @@ class AFMotorSetSerial():
             dir_i = '-'
         output_str = ""
         for m in self.motors:
-            output_str += m.getComm()
+            output_str += m.getCommStr()
         self.ser.write(output_str.encode())
         return output_str
 
