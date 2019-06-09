@@ -4,6 +4,7 @@ import pigpio
 import piconzero as pz, time
 from smbus import SMBus
 import serial
+import os
 
 class PiconZeroMotor:
     #pico = null
@@ -144,8 +145,15 @@ addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
 #af_motor_set = AFMotorSet(bus)
+
+USB_PATH1 = '/dev/ttyUSB0'
+USB_PATH2 = '/dev/ttyUSB1'
 #af_motor_set = AFMotorSetSerial('/dev/ttyUSB0')
-af_motor_set = AFMotorSetSerial('/dev/ttyUSB1')
+exists = os.path.isfile(USB_PATH1)
+if exists:
+    af_motor_set = AFMotorSetSerial(USB_PATH1)
+else:
+    af_motor_set = AFMotorSetSerial(USB_PATH2)
 
 @app.route('/')
 def index():
