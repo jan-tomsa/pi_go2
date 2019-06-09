@@ -170,7 +170,7 @@ def afmotor(motor_id):
         speed = 255
     else:
         speed = int(speedArg)
-    timerArg = request.args.get('timer')  // in miliseconds
+    timerArg = request.args.get('timer')  # in miliseconds
     if timerArg is not None:
         timer = int(timerArg)
     else:
