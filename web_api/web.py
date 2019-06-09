@@ -6,6 +6,7 @@ from smbus import SMBus
 import serial
 import os
 import threading
+from datetime import datetime
 
 class PiconZeroMotor:
     #pico = null
@@ -159,9 +160,14 @@ if (not usb1_exists and not usb2_exists):
 
 @app.route('/')
 def index():
-    resp = make_response('PiGO 2 web module testing message!')
+    current_time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    resp = make_response('PiGO 2 web module testing message! It is {}'.format(current_time_stamp))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
+
+def stop_afmotor(motor_id):
+    print('timer expired, stopping the motor {}'.format(motor_id))
+    af_motor_set.setSpeed(motor_id-1,'STOP',0)
 
 @app.route('/afmotor/<int:motor_id>/')
 def afmotor(motor_id):
@@ -174,7 +180,8 @@ def afmotor(motor_id):
     timerArg = request.args.get('timer')  # in seconds
     if timerArg is not None:
         timer = int(timerArg)
-        t = threading.Timer(timer, lambda : af_motor_set.setSpeed(motor_id-1,'STOP',0))
+        t = threading.Timer(timer, stop_afmotor, kwargs={'motor_id':motor_id})
+        print('starting timer for motor {}'.format(motor_id))
         t.start()
     else:
         timer = 0
