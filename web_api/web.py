@@ -165,9 +165,18 @@ def index():
 @app.route('/afmotor/<int:motor_id>/')
 def afmotor(motor_id):
     direction = request.args.get('dir')
-    speed = int(request.args.get('speed'))
+    speedArg = request.args.get('speed')
+    if speedArg is None:
+        speed = 255
+    else:
+        speed = int(speedArg)
+    timerArg = request.args.get('timer')  // in miliseconds
+    if timerArg is not None:
+        timer = int(timerArg)
+    else:
+        timer = 0
     motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
-    resp = make_response('AFMotor {} - direction: {} speed: {}, comm: "{}"'.format(motor_id,direction,speed,motor_response))
+    resp = make_response('AFMotor {} - direction: {} speed: {}, comm: "{}", timer: {}'.format(motor_id,direction,speed,motor_response,timer))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
