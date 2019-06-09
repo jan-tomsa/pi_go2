@@ -5,6 +5,7 @@ import piconzero as pz, time
 from smbus import SMBus
 import serial
 import os
+import threading
 
 class PiconZeroMotor:
     #pico = null
@@ -170,9 +171,10 @@ def afmotor(motor_id):
         speed = 255
     else:
         speed = int(speedArg)
-    timerArg = request.args.get('timer')  # in miliseconds
+    timerArg = request.args.get('timer')  # in seconds
     if timerArg is not None:
         timer = int(timerArg)
+        t = threading.Timer(timer, lambda x: af_motor_set.setSpeed(motor_id-1,'STOP',0))
     else:
         timer = 0
     motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
