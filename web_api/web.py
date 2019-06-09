@@ -174,7 +174,8 @@ def afmotor(motor_id):
     timerArg = request.args.get('timer')  # in seconds
     if timerArg is not None:
         timer = int(timerArg)
-        t = threading.Timer(timer, lambda x: af_motor_set.setSpeed(motor_id-1,'STOP',0))
+        t = threading.Timer(timer, lambda : af_motor_set.setSpeed(motor_id-1,'STOP',0))
+        t.start()
     else:
         timer = 0
     motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
