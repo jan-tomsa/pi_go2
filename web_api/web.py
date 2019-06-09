@@ -144,6 +144,7 @@ addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
 #af_motor_set = AFMotorSet(bus)
+#af_motor_set = AFMotorSetSerial('/dev/ttyUSB0')
 af_motor_set = AFMotorSetSerial('/dev/ttyUSB1')
 
 @app.route('/')
