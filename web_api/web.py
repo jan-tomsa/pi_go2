@@ -144,16 +144,17 @@ motors = [motor1,motor2,motor3,motor4,motor5]
 addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
-#af_motor_set = AFMotorSet(bus)
-
 USB_PATH1 = '/dev/ttyUSB0'
 USB_PATH2 = '/dev/ttyUSB1'
-#af_motor_set = AFMotorSetSerial('/dev/ttyUSB0')
-exists = os.path.isfile(USB_PATH1)
-if exists:
+usb1_exists = os.path.exists(USB_PATH1)
+usb2_exists = os.path.exists(USB_PATH2)
+if usb1_exists:
     af_motor_set = AFMotorSetSerial(USB_PATH1)
-else:
+if usb2_exists:
     af_motor_set = AFMotorSetSerial(USB_PATH2)
+
+if (not usb1_exists and not usb2_exists):
+    af_motor_set = AFMotorSet(bus)
 
 @app.route('/')
 def index():
