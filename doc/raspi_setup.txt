@@ -33,3 +33,22 @@ export FLASK_APP="web.py"
 export FLASK_DEBUG="1"
 
 flask run
+
+== Apache ==
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+
+
+sudo a2dissite 000-default
+sudo vim /etc/apache2/sites-available/proxy-host.conf
+
+sudo a2ensite proxy-host
+
+
+
+cat /var/log/apache2/access.log
+cat /var/log/apache2/error.log
+
+sudo vim /etc/apache2/mods-enabled/proxy.conf
+
+sudo systemctl restart apache2

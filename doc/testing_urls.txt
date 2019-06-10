@@ -21,3 +21,11 @@ http://localhost:5555/afmotor/1/?dir=FORWARD&speed=255
 http://localhost:5555/afmotor/1/?dir=BACKRWARD&speed=255
 
 http://localhost:5555/afmotor/1/?dir=FORWARD&speed=255&timer=3
+
+----------------
+
+http://192.168.0.100/pi_go2/
+
+http://192.168.0.100/pi_go2/afmotor/1/?dir=FORWARD&speed=255
+
+http://192.168.0.100/pi_go2/afmotor/1/?dir=FORWARD&speed=255&timer=300
