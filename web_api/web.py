@@ -178,6 +178,7 @@ def afmotor(motor_id):
     else:
         speed = int(speedArg)
     timerArg = request.args.get('timer')  # in miliseconds
+    motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
     if timerArg is not None:
         time_to_stop_milis = int(timerArg)/1000
         t = threading.Timer(time_to_stop_milis, stop_afmotor, kwargs={'motor_id':motor_id})
@@ -185,7 +186,6 @@ def afmotor(motor_id):
         t.start()
     else:
         time_to_stop_milis = 0.0
-    motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
     resp = make_response('AFMotor {} - direction: {} speed: {}, comm: "{}", timer: {}'.format(motor_id,direction,speed,motor_response,time_to_stop_milis))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
