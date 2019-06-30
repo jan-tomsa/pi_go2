@@ -128,6 +128,12 @@ class AFMotorSetSerial():
         self.ser.write(output_str.encode())
         return output_str
 
+
+class TimedTask:
+    ##
+    def __init__(self, todo):
+        print(todo)  # TODO implement class for timed tasks
+
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
