@@ -3,7 +3,10 @@ from flask import Flask, make_response, request
 import pigpio
 import piconzero as pz, time
 from smbus import SMBus
-
+import serial
+import os
+import threading
+from datetime import datetime
 
 class PiconZeroMotor:
     #pico = null
@@ -82,6 +85,7 @@ class AFMotorSet():
         self.bus = bus_
 
     def setSpeed(self, mot_id, direction, speed):
+        dir_i = 0
         if direction == 'STOP':
             dir_i = 0
         if direction == 'FORWARD':
@@ -91,6 +95,44 @@ class AFMotorSet():
         self.comm_array[mot_id*2] = dir_i
         self.comm_array[mot_id*2+1] = speed
         self.bus.write_i2c_block_data(addr,self.comm_array[0],self.comm_array[1:])
+
+class AFMotor():
+    direction = '.'
+    speed = 0
+    def setSpeed(self, direction_, speed_):
+        self.direction = direction_
+        self.speed = speed_
+    def getCommStr(self):
+        return '{}{:03}'.format(self.direction, self.speed)
+
+class AFMotorSetSerial():
+    ser = None
+    motors = []
+    def __init__(self, serial_port_path):
+        self.ser = serial.Serial(serial_port_path, 9600) # Establish the connection on a specific port
+        self.motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
+
+    def setSpeed(self, mot_id, direction, speed):
+        dir_i = '.'
+        if direction == 'STOP':
+            dir_i = '.'
+        if direction == 'FORWARD':
+            dir_i = '+'
+        if direction == 'BACKWARD':
+            dir_i = '-'
+        output_str = ""
+        self.motors[mot_id].setSpeed(dir_i,speed)
+        for m in self.motors:
+            output_str += m.getCommStr()
+        output_str += '\n'
+        self.ser.write(output_str.encode())
+        return output_str
+
+
+class TimedTask:
+    ##
+    def __init__(self, todo):
+        print(todo)  # TODO implement class for timed tasks
 
 app = Flask(__name__)
 
@@ -110,20 +152,47 @@ motors = [motor1,motor2,motor3,motor4,motor5]
 addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
 
-af_motor_set = AFMotorSet(bus)
+USB_PATH1 = '/dev/ttyUSB0'
+USB_PATH2 = '/dev/ttyUSB1'
+usb1_exists = os.path.exists(USB_PATH1)
+usb2_exists = os.path.exists(USB_PATH2)
+if usb1_exists:
+    af_motor_set = AFMotorSetSerial(USB_PATH1)
+if usb2_exists:
+    af_motor_set = AFMotorSetSerial(USB_PATH2)
+
+if (not usb1_exists and not usb2_exists):
+    af_motor_set = AFMotorSet(bus)
 
 @app.route('/')
 def index():
-    resp = make_response('Flaska se hlasi!')
+    current_time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    resp = make_response('PiGO 2 web module testing message! It is {}'.format(current_time_stamp))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
+
+def stop_afmotor(motor_id):
+    print('timer expired, stopping the motor {}'.format(motor_id))
+    af_motor_set.setSpeed(motor_id-1,'STOP',0)
 
 @app.route('/afmotor/<int:motor_id>/')
 def afmotor(motor_id):
     direction = request.args.get('dir')
-    speed = int(request.args.get('speed'))
-    af_motor_set.setSpeed(motor_id-1,direction,speed)
-    resp = make_response('AFMotor {} - direction: {} speed: {}'.format(motor_id,direction,speed))
+    speedArg = request.args.get('speed')
+    if speedArg is None:
+        speed = 255
+    else:
+        speed = int(speedArg)
+    timerArg = request.args.get('timer')  # in miliseconds
+    motor_response = af_motor_set.setSpeed(motor_id-1,direction,speed)
+    if timerArg is not None:
+        time_to_stop_milis = int(timerArg)/1000
+        t = threading.Timer(time_to_stop_milis, stop_afmotor, kwargs={'motor_id':motor_id})
+        print('starting timer for motor {}'.format(motor_id))
+        t.start()
+    else:
+        time_to_stop_milis = 0.0
+    resp = make_response('AFMotor {} - direction: {} speed: {}, comm: "{}", timer: {}'.format(motor_id,direction,speed,motor_response,time_to_stop_milis))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -168,6 +237,15 @@ def pin_write(pin_no):
     val = int(request.args.get('val'))
     pi.write(pin_no, val)
     resp = make_response('Pin {} set to {}'.format(pin_no,val))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route('/pwm/<int:gpio>/')
+def pwm(gpio):
+    val = int(request.args.get('val'))
+    pi.set_PWM_dutycycle(gpio,val)
+    resp = make_response('PWM {} set to {}'.format(gpio,val))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 

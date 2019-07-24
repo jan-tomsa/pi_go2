@@ -1,3 +1,5 @@
+http://localhost:5555/
+
 http://localhost:5555/write/21/?val=1
 
 http://localhost:5555/write/21/?val=0
@@ -9,3 +11,21 @@ http://localhost:5555/set_mode/22/?mode=OUTPUT
 http://localhost:5555/get_mode/22/
 
 http://localhost:5555/read/22/
+
+http://localhost:5555/pwm/18/?val=64
+
+http://localhost:5555/pwm/12/?val=64
+
+http://localhost:5555/afmotor/1/?dir=FORWARD&speed=255
+
+http://localhost:5555/afmotor/1/?dir=BACKRWARD&speed=255
+
+http://localhost:5555/afmotor/1/?dir=FORWARD&speed=255&timer=3
+
+----------------
+
+http://192.168.0.100/pi_go2/
+
+http://192.168.0.100/pi_go2/afmotor/1/?dir=FORWARD&speed=255
+
+http://192.168.0.100/pi_go2/afmotor/1/?dir=FORWARD&speed=255&timer=300
