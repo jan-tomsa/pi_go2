@@ -43,14 +43,13 @@ sudo apt install apache2
 sudo a2enmod proxy
 sudo a2enmod proxy_http
 
-sudo systemctl restart apache2
 
 sudo a2dissite 000-default
 sudo vim /etc/apache2/sites-available/proxy-host.conf
 
 sudo a2ensite proxy-host
 
-
+uncomment "ProxyRequests On" line
 
 cat /var/log/apache2/access.log
 cat /var/log/apache2/error.log
