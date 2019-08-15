@@ -1,0 +1,17 @@
+(to be added to the end)
+
+## PiGO2 autorun
+echo SSH_CLIENT:       ${SSH_CLIENT}
+echo SSH_CLIENT:       ${SSH_CLIENT} >>/tmp/pigo2.log
+echo SSH_CONNECTION:   ${SSH_CONNECTION}
+echo SSH_CONNECTION:   ${SSH_CONNECTION} >>/tmp/pigo2.log
+echo SSH_TTY:          ${SSH_TTY}
+echo SSH_TTY:          ${SSH_TTY} >>/tmp/pigo2.log
+
+if [ -z "${SSH_TTY}" ]
+then
+	echo "Running PiGO2 script automatically"
+	/home/pi/run_pigo2.sh >>/tmp/pigo2.log 2>>/tmp/pigo2.err
+else
+	echo "Remote login deteted. Skipping the PiGO2 autorun."
+fi
