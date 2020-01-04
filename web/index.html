@@ -3,23 +3,74 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+var pi_go_obj = {};
+
+function piconzero( motor_id, speed ) {
+    pi_go_target_url = pi_go_obj.base_url+"/piconzero/"+motor_id+"/?speed="+speed;
+    $("#inp_url").val(pi_go_target_url);
+    $("#div1").load(pi_go_target_url);
+}
+
 $(document).ready(function(){
-  $("#but1").click(function(){
-    $("#div1").load("http://localhost:5555/");
+  pi_go_obj.hostname = window.location.hostname;
+  pi_go_obj.base_url = "http://"+pi_go_obj.hostname+"/pi_go2";
+  
+  $("#but_test").click(function(){
+    $("#div1").load(pi_go_obj.base_url);
   });
-  $("#but2").click(function(){
-    $("#div1").load("http://localhost:5555/");
+  
+  $(".but_x").click(function(){
+    var but = $( this );
+    piconzero(but.attr('motor_id'),but.attr('speed'));
   });
 });
 </script>
 </head>
 <body>
 
-<div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
+<table>
+<tr>
+<td>
+<button id="but_test">Base</button>
 
-<button id="but1">But 1</button>
+<hr>
 
-<button id="but2">But 2</button>
+<button class="but_x" motor_id="3" speed="-50" id="but_claws_50">Claws close</button>
+<button class="but_x" motor_id="3" speed="0" id="but_claws_stop">Claws stop</button>
+<button class="but_x" motor_id="3" speed="50" id="but_claws_m50">Claws open</button>
+
+<hr>
+
+<button class="but_x" motor_id="4" speed="-50">Claws rot CCW</button>
+<button class="but_x" motor_id="4" speed="0">Claws rot stop</button>
+<button class="but_x" motor_id="4" speed="50">Claws rot CW</button>
+
+<hr>
+
+<button class="but_x" motor_id="0" speed="250">Elbow down</button>
+<button class="but_x" motor_id="0" speed="0">Elbow stop</button>
+<button class="but_x" motor_id="0" speed="-250">Elbow up</button>
+
+<hr>
+
+<button class="but_x" motor_id="2" speed="-100">Arm down</button>
+<button class="but_x" motor_id="2" speed="0">Arm stop</button>
+<button class="but_x" motor_id="2" speed="100">Arm up</button>
+
+<hr>
+
+<button class="but_x" motor_id="1" speed="-50" id="but_turntable_ccw">Turntable CCW</button>
+<button class="but_x" motor_id="1" speed="0" id="but_turntable_stop">Turntable stop</button>
+<button class="but_x" motor_id="1" speed="50" id="but_turntable_cw">Turntable CW</button>
+
+</td>
+<td>
+<div id="div1">........</div>
+</td>
+</tr>
+</table>
+
+<input type="text" id="inp_url" size="80" value="....">
 
 </body>
 </html>
