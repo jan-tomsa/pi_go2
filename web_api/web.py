@@ -1,23 +1,26 @@
 #/usr/bin/python3
 from flask import Flask, make_response, request
 import pigpio
-import piconzero as pz, time
-from smbus import SMBus
+from . import piconzero as pz
+#import time
+from smbus2 import SMBus
 import serial
 import os
 import threading
 from datetime import datetime
 
+
 class PiconZeroMotor:
     #pico = null
     current_speed = 0
+
     def setPico(self,pico_):
         self.pico = pico_
 
     def getPico(self):
         return self.pico
 
-    def incSpeed(self,delta):
+    def incSpeed(self, delta):
         self.current_speed = max( min( self.current_speed+delta, 127), -127)
         self.setSpeed(self.current_speed)
 
@@ -32,9 +35,11 @@ class PiconZeroMotor:
         self.current_speed = -abs(self.current_speed)
         self.setSpeed(self.current_speed)
 
+
 # Motor driven by "standard" Picon Zero motor controls
 class MMotor(PiconZeroMotor):
     mot_no = 0
+
     def __init__(self, pico_, mot_no_):
         self.setPico(pico_)
         self.mot_no = mot_no_
@@ -50,10 +55,12 @@ class MMotor(PiconZeroMotor):
 
 OUTPUT_PWM = 1
 
+
 # Motor driven by Picon Zero PWM (servo) controls
 class PMotor(PiconZeroMotor):
     pin1 = 0
     pin2 = 0
+
     def __init__(self, pico_, pin1_, pin2_):
         self.setPico(pico_)
         self.pin1 = pin1_
@@ -80,7 +87,8 @@ class PMotor(PiconZeroMotor):
 
 class AFMotorSet():
     bus = None
-    comm_array = [0,0,0,0,0,0,0,0]
+    comm_array = [0, 0, 0, 0, 0, 0, 0, 0]
+
     def __init__(self, bus_):
         self.bus = bus_
 
@@ -96,18 +104,23 @@ class AFMotorSet():
         self.comm_array[mot_id*2+1] = speed
         self.bus.write_i2c_block_data(addr,self.comm_array[0],self.comm_array[1:])
 
-class AFMotor():
+
+class AFMotor:
     direction = '.'
     speed = 0
+
     def setSpeed(self, direction_, speed_):
         self.direction = direction_
         self.speed = speed_
+
     def getCommStr(self):
         return '{}{:03}'.format(self.direction, self.speed)
 
-class AFMotorSetSerial():
+
+class AFMotorSetSerial:
     ser = None
     motors = []
+
     def __init__(self, serial_port_path):
         self.ser = serial.Serial(serial_port_path, 9600) # Establish the connection on a specific port
         self.motors = [AFMotor(),  AFMotor(),   AFMotor(),  AFMotor()]
@@ -134,6 +147,7 @@ class TimedTask:
     def __init__(self, todo):
         print(todo)  # TODO implement class for timed tasks
 
+
 app = Flask(__name__)
 
 # Access-Control-Allow-Origin *
@@ -147,7 +161,7 @@ motor3 = PMotor( pz, 5, 4 )
 motor4 = PMotor( pz, 3, 2 )
 motor5 = PMotor( pz, 1, 0 )
 
-motors = [motor1,motor2,motor3,motor4,motor5]
+motors = [motor1, motor2, motor3, motor4, motor5]
 
 addr = 0x8 # bus address
 bus = SMBus(1) # indicates /dev/ic2-1
@@ -164,6 +178,7 @@ if usb2_exists:
 if (not usb1_exists and not usb2_exists):
     af_motor_set = AFMotorSet(bus)
 
+
 @app.route('/')
 def index():
     current_time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -171,9 +186,11 @@ def index():
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+
 def stop_afmotor(motor_id):
     print('timer expired, stopping the motor {}'.format(motor_id))
     af_motor_set.setSpeed(motor_id-1,'STOP',0)
+
 
 @app.route('/afmotor/<int:motor_id>/')
 def afmotor(motor_id):
@@ -196,6 +213,7 @@ def afmotor(motor_id):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+
 @app.route('/piconzero/<int:motor_id>/')
 def piconzero(motor_id):
     speed = int(request.args.get('speed'))
@@ -217,6 +235,7 @@ def set_mode(pin_no):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
+
 @app.route('/get_mode/<int:pin_no>/')
 def get_mode(pin_no):
     mode = pi.get_mode(pin_no)
@@ -231,6 +250,7 @@ def pin_read(pin_no):
     resp = make_response('{}'.format(val))
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
+
 
 @app.route('/write/<int:pin_no>/')
 def pin_write(pin_no):
