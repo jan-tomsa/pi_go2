@@ -1,9 +1,8 @@
-#/usr/bin/python3
 from flask import Flask, make_response, request
 import pigpio
-from . import piconzero as pz
+import piconzero as pz
 #import time
-from smbus2 import SMBus
+from smbus import SMBus
 import serial
 import os
 import threading
